@@ -155,6 +155,7 @@ def split(X):
     a = X[:,:,:,:3]
     b = X[:,:,:,3:6]
     a._keras_shape = None
+    b._keras_shape = None
     assert K.is_keras_tensor(a)
     assert K.is_keras_tensor(b)
     return a,b
