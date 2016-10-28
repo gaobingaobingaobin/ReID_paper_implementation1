@@ -154,6 +154,8 @@ def cross_input_shape_single(input_shapes):
 def split(X):
     a = X[:,:,:,:3]
     b = X[:,:,:,3:6]
+    assert is_keras_tensor(a)
+    assert is_keras_tensor(a)
     return a,b
 
 def split_shape(input_shape):
