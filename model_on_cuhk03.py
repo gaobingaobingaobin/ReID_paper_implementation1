@@ -154,13 +154,14 @@ def cross_input_shape_single(input_shapes):
 def split(X):
     return X[:,:,:,:3],X[:,:,:,3:6]
 
-
+def split_shape(input_shape):
+    return [input_shape[0],input_shape[1],input_shape[2],input_shape[3]/2]
 '''
 model definition and compile
 -------------------------------------------------------------------------------
 '''
 p1 = Input(shape=(160,60,6))
-a1,b1 = Lambda(split,output_shape=(160,60,3))(p1)
+a1,b1 = Lambda(split,output_shape=split_shape)(p1)
 share = Convolution2D(20,5,5,dim_ordering='tf', W_regularizer=l2(l=0.0005))
 a2 = share(a1)
 b2 = share(b1)
