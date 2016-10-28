@@ -152,7 +152,9 @@ def cross_input_shape_single(input_shapes):
 
 
 def split(X):
-    return X[:,:,:,:3],X[:,:,:,3:6]
+    a = X[:,:,:,:3]
+    b = X[:,:,:,3:6]
+    return a,b
 
 def split_shape(input_shape):
     return [input_shape[0],input_shape[1],input_shape[2],input_shape[3]/2],[input_shape[0],input_shape[1],input_shape[2],input_shape[3]/2]
