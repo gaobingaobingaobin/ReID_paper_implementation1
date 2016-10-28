@@ -16,8 +16,6 @@ from load_cuhk03_data import load_positive_data,load_negative_data
 from keras.preprocessing import image as pre_image
 
 K._IMAGE_DIM_ORDERING = 'tf'
-the_filename = 'data_by_path.pkl'
-dir_path = '/home/ubuntu/dataset/market1501/boundingboxtrain'
 
 
 class SGD_new(SGD):
