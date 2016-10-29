@@ -26,6 +26,7 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
     for i in xrange(5):
         for k in xrange(f[f['labeled'][0][i]][0].size):
             for j in xrange(5):
+                print 'i:',i,'j:',j,'k:',k
                 a = np.array(f[f[f['labeled'][0][i]][j][k]])
                 b = np.array(f[f[f['labeled'][0][i]][j+5][k]])
                 if b.size == 1: continue
