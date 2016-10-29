@@ -196,7 +196,32 @@ def load_validation_data(file_path = './CUHK03/cuhk-03.mat'):
                                 y_val   = f.create_dataset('y_val',  data = y_val)
                                 print 'validation set already stored in local disk.'
                                 
-    
+
+def load_testset_data(file_path = './CUHK03/cuhk-03.mat'):
+    f = h5py.File(file_path)
+    image_array_list_a = []
+    image_array_list_b = []
+    test_set_index = np.array(f[f['testsets'][0][1]]).T
+    print 'Begin to create test data.'
+    count = 0
+    for i,k in test_set_index:
+        for ja in xrange(5):
+            a = np.array(f[f[f['labeled'][0][i]][ja][k]])
+            if a.size > 3: 
+                break
+        for jb in xrange(5,10):
+            b = np.array(f[f[f['labeled'][0][i]][jb][k]])
+            if b.size > 3:
+                break
+        a = _resize_image(a.transpose(2,1,0))
+        b = _resize_image(b.transpose(2,1,0))
+        image_array_list_a.append(a)
+        image_array_list_b.append(b)
+        count += 1
+        print 'already made',count,'test pairs'
+    print 'test data preparation done.'
+    return image_array_list_a,image_array_list_b                                
+                                
 if __name__=='__main__':
     print 'loading positive data......'
     x_pos, y_pos = load_positive_data()
