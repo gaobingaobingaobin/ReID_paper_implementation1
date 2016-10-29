@@ -17,6 +17,50 @@ from keras.preprocessing import image as pre_image
 
 K._IMAGE_DIM_ORDERING = 'tf'
 
+class NumpyArrayIterator_for_multiinput(pre_image.Iterator):
+
+    def __init__(self, X, y, image_data_generator=None,
+                 batch_size=32, shuffle=False, seed=None,
+                 dim_ordering='default'):
+        
+        if dim_ordering == 'default':
+            dim_ordering = K.image_dim_ordering()
+        self.X1 = X[0]
+        self.X2 = X[1]
+        self.y = y
+        self.image_data_generator = image_data_generator
+        self.dim_ordering = dim_ordering
+        super(NumpyArrayIterator_for_multiinput, self).__init__(X[0].shape[0], batch_size, shuffle, seed)
+
+    def next(self):
+        # for python 2.x.
+        # Keeps under lock only the mechanism which advances
+        # the indexing of each batch
+        # see http://anandology.com/blog/using-iterators-and-generators/
+        with self.lock:
+            index_array, current_index, current_batch_size = next(self.index_generator)
+        # The transformation of images is not under thread lock so it can be done in parallel
+        batch_x1 = np.zeros(tuple([current_batch_size] + list(self.X1.shape)[1:]))
+        batch_x2 = np.zeros(tuple([current_batch_size] + list(self.X2.shape)[1:]))
+        for i, j in enumerate(index_array):
+            x1 = self.X1[j]
+            x2 = self.X2[j]
+            if self.image_data_generator is None:
+                batch_x1[i] = x1
+                batch_x2[i] = x2
+                continue
+            else:
+                x1 = self.image_data_generator.random_transform(x1.astype('float32'))
+                x2 = self.image_data_generator.random_transform(x2.astype('float32'))
+                x1 = self.image_data_generator.standardize(x1)
+                x2 = self.image_data_generator.standardize(x2)
+                batch_x1[i] = x1
+                batch_x2[i] = x2
+       
+        if self.y is None:
+            return [batch_x1, batch_x2]
+        batch_y = self.y[index_array]
+        return [batch_x1,batch_x2], batch_y
 
 class SGD_new(SGD):
     '''Stochastic gradient descent, with support for momentum,
