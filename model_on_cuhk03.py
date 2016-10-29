@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Oct 28 22:20:31 2016
-
 @author: dingning
 """
 import numpy as np
@@ -250,7 +249,5 @@ Y_train = np_utils.to_categorical(Y_train, 2)
 -------------------------------------------------------------------------------
 '''
 print 'begin to train model.'
-model.fit_generator(Data_Generator.flow(X_train, Y_train, batch_size=150),
+model.fit_generator(NumpyArrayIterator_for_multiinput(X_train, Y_train, batch_size=150),
                     samples_per_epoch=len(X_train), nb_epoch=20)
-
-
