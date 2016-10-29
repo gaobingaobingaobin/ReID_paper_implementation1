@@ -71,8 +71,6 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                         if b.size < 3:
                             continue
                         else:
-                            print 'a.shape:',a.shape
-                            print 'b.shape:',b.shape
                             a = _resize_image(a.transpose(2,1,0))
                             b = _resize_image(b.transpose(2,1,0))
                             image_array_list_a.append(a)
@@ -108,7 +106,6 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
 def _resize_image(im_array,shape=(160,60)):
     if im_array.shape[2] > 3:
         im_array = im_array.transpose(2,1,0)
-    print im_array.shape
     im = image.array_to_img(im_array,dim_ordering = 'tf')
     im = im.resize(shape)
     array = image.img_to_array(im,dim_ordering = 'tf')
