@@ -33,13 +33,13 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                 if b.size < 3 or a.size < 3: 
                     continue
                 else:
-                    a = _resize_image(np.swapaxes(a,0,2))
-                    b = _resize_image(np.swapaxes(b,0,2))
+                    a = _resize_image(np.transpose(a,(1,2,0))
+                    b = _resize_image(np.transpose(b,(1,2,0))
                     image_array_list_a.append(a)
                     image_array_list_b.append(b)
     x_positive_a = np.array(image_array_list_a)
     x_positive_b = np.array(image_array_list_b)
-    y_positive = np.ones_like(x_positive_a)
+    y_positive = np.ones(len(x_positive_a))
     return [x_positive_a,x_positive_b],y_positive
 
 
@@ -49,13 +49,13 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
     image_array_list_b = []
     for _ in xrange(positive_data_length * ratio):
         a,b = _random_choose(f)
-        a = _resize_image(np.swapaxes(a,0,2))
-        b = _resize_image(np.swapaxes(b,0,2))
+        a = _resize_image(np.transpose(a,(1,2,0))
+        b = _resize_image(np.transpose(b,(1,2,0))
         image_array_list_a.append(a)
         image_array_list_b.append(b)
     x_negative_a = np.array(image_array_list_a)
     x_negative_b = np.array(image_array_list_b)
-    y_negative = np.zeros_like(x_negative_a)
+    y_negative = np.zeros(len(x_negative_a))
     return [x_negative_a,x_negative_b],y_negative
 
 
