@@ -7,8 +7,9 @@ Created on Sat Oct 29 14:09:23 2016
 from keras.models import Model
 from keras.layers import Input,Dense,Convolution2D,Activation,MaxPooling2D,Flatten,merge
 from keras.regularizers import l2
+from keras import backend as K
 
-print 'now begin to compile the model.'
+print 'now begin to define the model.'
 
 def concat_iterat(input_tensor):
     input_expand = K.expand_dims(K.expand_dims(input_tensor, -2), -2)
