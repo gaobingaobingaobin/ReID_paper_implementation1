@@ -104,6 +104,7 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
 
 
 def _resize_image(im_array,shape=(160,60)):
+    print im_array.shape
     im = image.array_to_img(im_array,dim_ordering = 'tf')
     im = im.resize(shape)
     array = image.img_to_array(im,dim_ordering = 'tf')
