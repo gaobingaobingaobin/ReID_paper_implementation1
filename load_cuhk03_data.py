@@ -33,8 +33,8 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                 if b.size < 3 or a.size < 3: 
                     continue
                 else:
-                    a = _resize_image(np.transpose(a,(1,2,0))
-                    b = _resize_image(np.transpose(b,(1,2,0))
+                    a = _resize_image(np.transpose(a,(1,2,0)))
+                    b = _resize_image(np.transpose(b,(1,2,0)))
                     image_array_list_a.append(a)
                     image_array_list_b.append(b)
     x_positive_a = np.array(image_array_list_a)
@@ -49,8 +49,8 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
     image_array_list_b = []
     for _ in xrange(positive_data_length * ratio):
         a,b = _random_choose(f)
-        a = _resize_image(np.transpose(a,(1,2,0))
-        b = _resize_image(np.transpose(b,(1,2,0))
+        a = _resize_image(np.transpose(a,(1,2,0)))
+        b = _resize_image(np.transpose(b,(1,2,0)))
         image_array_list_a.append(a)
         image_array_list_b.append(b)
     x_negative_a = np.array(image_array_list_a)
