@@ -59,9 +59,9 @@ c3 = Convolution2D(25,3,3, subsample=(1,1), dim_ordering='tf',activation='relu',
 c4 = MaxPooling2D((2,2),dim_ordering='tf')(c3)
 c5 = Flatten()(c4)
 c6 = Dense(10,activation='relu', W_regularizer=l2(l=0.0005))(c5)
-c8 = Dense(2,activation='softmax', W_regularizer=l2(l=0.0005))(c7)
+c7 = Dense(2,activation='softmax', W_regularizer=l2(l=0.0005))(c6)
 
-model = Model(input=[a1,b1],output=c8)
+model = Model(input=[a1,b1],output=c7)
 model.summary()
 
 print 'model definition done.'
