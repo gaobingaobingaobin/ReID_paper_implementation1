@@ -42,8 +42,8 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
     image_array_list = []
     for _ in xrange(positive_data_length * ratio):
         a,b = _random_choose(f)
-        a = _resize_image(np.swapaxis(a,0,2))
-        b = _resize_image(np.swapaxis(b,0,2))
+        a = _resize_image(np.swapaxes(a,0,2))
+        b = _resize_image(np.swapaxes(b,0,2))
         image_array_list.append(np.concatenate([a,b],axis=2))
     x_negative = np.array(image_array_list)
     y_negative = np.array(['negative'] * len(image_array_list))
