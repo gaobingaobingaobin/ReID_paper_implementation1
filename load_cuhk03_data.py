@@ -2,7 +2,7 @@
 """
 Created on Fri Oct 28 15:05:39 2016
 
-@author: dingning
+@author: 
 """
 import h5py
 import numpy as np
@@ -28,7 +28,7 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
             for j in xrange(5):
                 a = np.array(f[f[f['labeled'][0][i]][j][k]])
                 b = np.array(f[f[f['labeled'][0][i]][j+5][k]])
-                if not b: continue
+                if b.size == 1: continue
                 a = _resize_image(np.swapaxis(a,0,2))
                 b = _resize_image(np.swapaxis(b,0,2))
                 image_array_list.append(np.concatenate([a,b],axis=2))
@@ -69,3 +69,14 @@ def _random_choose(f):
         b = np.array(f[f[f['labeled'][0][i]][j+5][k2]])
         if a.size > 1 and b.size > 1: break
     return a,b
+
+
+
+
+
+
+
+
+
+
+
