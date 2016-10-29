@@ -76,7 +76,7 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                             image_array_list_a.append(a)
                             image_array_list_b.append(b)
                             count += 1
-            print 'already load',count,'positive pairs'
+                            print 'already load',count,'positive pairs'
                 
     x_positive_a = np.array(image_array_list_a)
     x_positive_b = np.array(image_array_list_b)
