@@ -40,7 +40,7 @@ class ImageDataGenerator_for_multiinput(image.ImageDataGenerator):
         if augment:
             aX = np.zeros(tuple([rounds * X.shape[0]] + list(X.shape)[1:]))
             for r in range(rounds):
-                print 'rounds:',rounds
+                print 'rounds:',r
                 for i in range(X.shape[0]):
                     aX[i + r * X.shape[0]] = self.random_transform(X[i])
             X = aX
