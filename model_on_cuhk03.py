@@ -16,6 +16,47 @@ from keras.preprocessing import image as pre_image
 
 K._IMAGE_DIM_ORDERING = 'tf'
 
+class ImageDataGenerator_for_multiinput(pre_image.ImageDataGenerator):
+    def fit(self, X,
+            augment=False,
+            rounds=1,
+            seed=None):
+        '''Required for featurewise_center, featurewise_std_normalization
+        and zca_whitening.
+        # Arguments
+            X: Numpy array, the data to fit on.
+            augment: whether to fit on randomly augmented samples
+            rounds: if `augment`,
+                how many augmentation passes to do over the data
+            seed: random seed.
+        '''
+        if seed is not None:
+            np.random.seed(seed)
+
+        X = np.copy(X)
+        if augment:
+            aX = np.zeros(tuple([rounds * X.shape[0]] + list(X.shape)[1:]))
+            for r in range(rounds):
+                for i in range(X.shape[0]):
+                    aX[i + r * X.shape[0]] = self.random_transform(X[i])
+            X = aX
+
+        if self.featurewise_center:
+            self.mean = np.mean(X, axis=0)
+            X -= self.mean
+
+        if self.featurewise_std_normalization:
+            self.std = np.std(X, axis=0)
+            X /= (self.std + 1e-7)
+
+        if self.zca_whitening:
+            flatX = np.reshape(X, (X.shape[0], X.shape[1] * X.shape[2] * X.shape[3]))
+            sigma = np.dot(flatX.T, flatX) / flatX.shape[0]
+            U, S, V = linalg.svd(sigma)
+            self.principal_components = np.dot(np.dot(U, np.diag(1. / np.sqrt(S + 10e-7))), U.T)
+        
+        return X
+
 class NumpyArrayIterator_for_multiinput(pre_image.Iterator):
 
     def __init__(self, X, y, image_data_generator=None,
@@ -180,7 +221,7 @@ data preparing
 -------------------------------------------------------------------------------
 '''
 print 'preparing training data......'
-Data_Generator = pre_image.ImageDataGenerator(
+Data_Generator = ImageDataGenerator_for_multiinput(
     width_shift_range=0.05,
     height_shift_range=0.05)
     
@@ -188,8 +229,8 @@ X_pos_train,Y_pos_train = load_positive_data()
 print 'already loaded positive data.'
 print 'positive data number:',len(Y_pos_train)
 
-Data_Generator.fit(X_pos_train[0],augment=True,rounds=5,seed=1217)
-Data_Generator.fit(X_pos_train[1],augment=True,rounds=5,seed=1217)
+X_pos_train[0] = Data_Generator.fit(X_pos_train[0],augment=True,rounds=5,seed=1217)
+X_pos_train[1] = Data_Generator.fit(X_pos_train[1],augment=True,rounds=5,seed=1217)
 Y_pos_train = np.repeat(Y_pos_train,5,axis=0)
 print 'positive data augmentation done.'
 print 'positive X data number after augmentation:',len(X_pos_train[0])
