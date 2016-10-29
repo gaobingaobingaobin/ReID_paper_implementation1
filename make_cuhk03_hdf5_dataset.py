@@ -89,18 +89,36 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
     image_array_list_a = []
     image_array_list_b = []
     print 'total number:',positive_data_length * ratio
-    for index in xrange(positive_data_length * ratio):
-        if (index+1) % 10000 == 0:
-            print 'already loaded:',index+1
-        a,b = _random_choose(f)
-        a = _resize_image(a.transpose(2,1,0))
-        b = _resize_image(b.transpose(2,1,0))
-        image_array_list_a.append(a)
-        image_array_list_b.append(b)
-    x_negative_a = np.array(image_array_list_a)
-    x_negative_b = np.array(image_array_list_b)
-    y_negative = np.zeros(len(x_negative_a))
-    return [x_negative_a,x_negative_b],y_negative
+    count = 0
+    while True:
+        for i in xrange(5):
+            for ka in xrange(f[f['labeled'][0][i]][0].size):
+                if [i,kb] in validation_set_index or [i,kb] in test_set_index:
+                    continue
+                for kb in xrange(f[f['labeled'][0][i]][0].size):
+                    if ka == kb or [i,kb] in validation_set_index or [i,kb] in test_set_index:
+                        continue                                                                                                            
+                    for ja in xrange(5):                
+                        a = np.array(f[f[f['labeled'][0][i]][ja][ka]])
+                        if a.size < 3: 
+                            continue
+                        else:
+                            for jb in xrange(5,10):
+                                b = np.array(f[f[f['labeled'][0][i]][jb][kb]])
+                                if b.size < 3:
+                                    continue
+                                else:
+                                    a = _resize_image(a.transpose(2,1,0))
+                                    b = _resize_image(b.transpose(2,1,0))
+                                    image_array_list_a.append(a)
+                                    image_array_list_b.append(b)
+                                    count += 1
+                                    print 'already load',count,'negative pairs'
+                                    if count == positive_data_length * ratio:                                                           
+                                        x_negative_a = np.array(image_array_list_a)
+                                        x_negative_b = np.array(image_array_list_b)
+                                        y_negative = np.zeros(len(x_negative_a))
+                                        return [x_negative_a,x_negative_b],y_negative
 
 
 def _resize_image(im_array,shape=(160,60)):
@@ -110,28 +128,6 @@ def _resize_image(im_array,shape=(160,60)):
     im = im.resize(shape)
     array = image.img_to_array(im,dim_ordering = 'tf')
     return array.transpose(1,0,2)
-
-
-def _random_choose(f):
-    validation_set_index = np.array(f[f['testsets'][0][0]]).T
-    test_set_index = np.array(f[f['testsets'][0][1]]).T
-    while True:
-        i = np.random.randint(0,5)
-        ja = np.random.randint(0,5)
-        jb = np.random.randint(5,10)
-        ka = np.random.randint(0,f[f['labeled'][0][i]][0].size)
-        while [i,ka] in validation_set_index or [i,ka] in test_set_index:
-            ka = np.random.randint(0,f[f['labeled'][0][i]][0].size)
-        kb = np.random.randint(0,f[f['labeled'][0][i]][0].size)
-        while [i,kb] in validation_set_index or [i,kb] in test_set_index:
-            kb = np.random.randint(0,f[f['labeled'][0][i]][0].size)
-        while ka == kb:
-            kb = np.random.randint(0,f[f['labeled'][0][i]][0].size)
-        a = np.array(f[f[f['labeled'][0][i]][ja][ka]])
-        b = np.array(f[f[f['labeled'][0][i]][jb][kb]])
-        if a.size > 2 and b.size > 2: break
-    return a,b
-    
 
 def load_validation_data(file_path = './CUHK03/cuhk-03.mat'):
     f = h5py.File(file_path)
