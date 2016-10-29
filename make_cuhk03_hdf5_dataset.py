@@ -76,7 +76,7 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                             image_array_list_a.append(a)
                             image_array_list_b.append(b)
                             count += 1
-                            print 'already load',count,'positive pairs'
+            print 'already load',count,'positive pairs'
                 
     x_positive_a = np.array(image_array_list_a)
     x_positive_b = np.array(image_array_list_b)
@@ -130,6 +130,71 @@ def _random_choose(f):
         if a.size > 2 and b.size > 2: break
     return a,b
     
+
+def load_validation_data(file_path = './CUHK03/cuhk-03.mat'):
+    f = h5py.File(file_path)
+    image_array_list_a = []
+    image_array_list_b = []
+    count = 0
+    validation_set_index = np.array(f[f['testsets'][0][0]]).T
+    print 'Begin to create positive validation data.'
+    for i,k in validation_set_index:
+        for ja in xrange(5):
+            a = np.array(f[f[f['labeled'][0][i]][ja][k]])
+            if a.size < 3: 
+                continue
+            else:
+                for jb in xrange(5,10):
+                    b = np.array(f[f[f['labeled'][0][i]][jb][k]])
+                    if b.size < 3:
+                        continue
+                    else:
+                        a = _resize_image(a.transpose(2,1,0))
+                        b = _resize_image(b.transpose(2,1,0))
+                        image_array_list_a.append(a)
+                        image_array_list_b.append(b)
+                        count += 1
+        print 'already made',count,'positive pairs'
+    x_positive_a = np.array(image_array_list_a)
+    x_positive_b = np.array(image_array_list_b)
+    y_positive = np.ones(len(x_positive_a))
+    print 'positive validation data numbers:',len(y_positive)
+    print 'Begin to make negative validation data.'
+    negative_list_a = []
+    negative_list_b = []
+    count = 0
+    for i in xrange(100):
+        for j in xrange(i+1,100):
+            for ja in xrange(5):
+                a = np.array(f[f[f['labeled'][0][validation_set_index[i][0]][ja][validation_set_index[i][1]]]])
+                if a.size < 3:
+                    continue
+                else:
+                    for jb in xrange(5,10):
+                        b = np.array(f[f[f['labeled'][0][validation_set_index[j][0]][jb][validation_set_index[j][1]]]])
+                        if b.size < 3:
+                            continue
+                        else:
+                            a = _resize_image(a.transpose(2,1,0))
+                            b = _resize_image(b.transpose(2,1,0))
+                            negative_list_a.append(a)
+                            negative_list_b.append(b)
+                            count += 1
+                            if count == 2 * len(y_positive):
+                                x_negative_a = np.array(negative_list_a)
+                                x_negative_b = np.array(negative_list_b)
+                                y_negative = np.zeros(len(x_negative_b))
+                                print 'negative validation set done.'
+                                print 'negative validation data numbers:',len(y_negative)
+                                print 'Begin to store the validation set in local disk.'
+                                x_val_a = np.concatenate([x_positive_a,x_negative_a],axis = 0)
+                                x_val_b = np.concatenate([x_positive_b,x_negative_b],axis = 0)
+                                y_val   = np.concatenate([y_positive,y_negative],axis = 0)
+                                x_val_1 = f.create_dataset('x_val_1',data = x_val_a)
+                                x_val_2 = f.create_dataset('x_val_2',data = x_val_b)
+                                y_val   = f.create_dataset('y_val',  data = y_val)
+                                print 'validation set already stored in local disk.'
+                                
     
 if __name__=='__main__':
     print 'loading positive data......'
@@ -169,9 +234,4 @@ if __name__=='__main__':
     print 'HDF5 data set created done.'
     print 'X train data number:',len(X1[0])
     print 'Y train data number:',len(Y)
-    
-    
-    
-    
-    
-    
+    load_validation_data()
