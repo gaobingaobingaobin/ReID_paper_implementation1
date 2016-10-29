@@ -29,8 +29,8 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                 a = np.array(f[f[f['labeled'][0][i]][j][k]])
                 b = np.array(f[f[f['labeled'][0][i]][j+5][k]])
                 if b.size == 1: continue
-                a = _resize_image(np.swapaxis(a,0,2))
-                b = _resize_image(np.swapaxis(b,0,2))
+                a = _resize_image(np.swapaxes(a,0,2))
+                b = _resize_image(np.swapaxes(b,0,2))
                 image_array_list.append(np.concatenate([a,b],axis=2))
     x_positive = np.array(image_array_list)
     y_positive = np.array(['positive'] * len(image_array_list))
