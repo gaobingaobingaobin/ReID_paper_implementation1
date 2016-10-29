@@ -187,14 +187,17 @@ Data_Generator = pre_image.ImageDataGenerator(
 X_pos_train,Y_pos_train = load_positive_data()
 print 'already loaded positive data.'
 
-Data_Generator.fit(X_pos_train,augment=True,rounds=5,seed=1217)
+Data_Generator.fit(X_pos_train[0],augment=True,rounds=5,seed=1217)
+Data_Generator.fit(X_pos_train[1],augment=True,rounds=5,seed=1217)
 Y_pos_train = np.repeat(Y_pos_train,5,axis=0)
 print 'positive data augmentation done.'
 
-X_neg_train,Y_neg_train = load_negative_data(len(X_pos_train))
+X_neg_train,Y_neg_train = load_negative_data(len(X_pos_train[0]))
 print 'already loaded negative data.'
 
-X_train = np.concatenate([X_pos_train,X_neg_train],axis=0)
+X_train = []
+X_train.append(np.concatenate([X_pos_train[0],X_neg_train[0]],axis=0))
+X_train.append(np.concatenate([X_pos_train[1],X_neg_train[1]],axis=0))
 Y_train = np.concatenate([Y_pos_train,Y_neg_train],axis=0)
 Y_train = np_utils.to_categorical(Y_train, 2)
 '''
