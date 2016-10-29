@@ -22,7 +22,8 @@ k: identity numbers
 
 def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
     f = h5py.File(file_path)
-    image_array_list = []
+    image_array_list_a = []
+    image_array_list_b = []
     for i in xrange(5):
         for k in xrange(f[f['labeled'][0][i]][0].size):
             for j in xrange(5):
@@ -34,23 +35,28 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                 else:
                     a = _resize_image(np.swapaxes(a,0,2))
                     b = _resize_image(np.swapaxes(b,0,2))
-                    image_array_list.append(np.concatenate([a,b],axis=2))
-    x_positive = np.array(image_array_list)
-    y_positive = np.array(['positive'] * len(image_array_list))
-    return x_positive,y_positive
+                    image_array_list_a.append(a)
+                    image_array_list_b.append(b)
+    x_positive_a = np.array(image_array_list_a)
+    x_positive_b = np.array(image_array_list_b)
+    y_positive = np.ones_like(x_positive_a)
+    return [x_positive_a,x_positive_b],y_positive
 
 
 def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cuhk-03.mat'):
     f = h5py.File(file_path)
-    image_array_list = []
+    image_array_list_a = []
+    image_array_list_b = []
     for _ in xrange(positive_data_length * ratio):
         a,b = _random_choose(f)
         a = _resize_image(np.swapaxes(a,0,2))
         b = _resize_image(np.swapaxes(b,0,2))
-        image_array_list.append(np.concatenate([a,b],axis=2))
-    x_negative = np.array(image_array_list)
-    y_negative = np.array(['negative'] * len(image_array_list))
-    return x_negative,y_negative
+        image_array_list_a.append(a)
+        image_array_list_b.append(b)
+    x_negative_a = np.array(image_array_list_a)
+    x_negative_b = np.array(image_array_list_b)
+    y_negative = np.zeros_like(x_negative_a)
+    return [x_negative_a,x_negative_b],y_negative
 
 
 def _resize_image(im_array,shape=(160,60)):
@@ -72,14 +78,4 @@ def _random_choose(f):
         b = np.array(f[f[f['labeled'][0][i]][j+5][k2]])
         if a.size > 2 and b.size > 2: break
     return a,b
-
-
-
-
-
-
-
-
-
-
 
