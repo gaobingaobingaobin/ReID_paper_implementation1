@@ -87,6 +87,8 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
 
 def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cuhk-03.mat'):
     f = h5py.File(file_path)
+    validation_set_index = np.array(f[f['testsets'][0][0]]).T
+    test_set_index = np.array(f[f['testsets'][0][1]]).T
     image_array_list_a = []
     image_array_list_b = []
     print 'total number:',positive_data_length * ratio
