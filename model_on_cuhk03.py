@@ -175,6 +175,34 @@ def cross_input_shape_single(input_shapes):
     input_shape = input_shapes[0]
     return (input_shape[0],input_shape[1] * 5,input_shape[2] * 5,input_shape[3])    
 
+'''
+data preparing
+-------------------------------------------------------------------------------
+'''
+print 'preparing training data......'
+Data_Generator = pre_image.ImageDataGenerator(
+    width_shift_range=0.05,
+    height_shift_range=0.05)
+    
+X_pos_train,Y_pos_train = load_positive_data()
+print 'already loaded positive data.'
+
+Data_Generator.fit(X_pos_train,augment=True,rounds=5,seed=1217)
+Y_pos_train = np.repeat(Y_pos_train,5,axis=0)
+print 'positive data augmentation done.'
+
+X_neg_train,Y_neg_train = load_negative_data(len(X_pos_train))
+print 'already loaded negative data.'
+
+X_train = np.concatenate([X_pos_train,X_neg_train],axis=0)
+Y_train = np.concatenate([Y_pos_train,Y_neg_train],axis=0)
+Y_train = np_utils.to_categorical(Y_train, 2)
+'''
+-------------------------------------------------------------------------------
+'''
+
+
+
 
 '''
 model definition and compile
@@ -221,33 +249,6 @@ metrics=['accuracy'])
 -------------------------------------------------------------------------------
 '''
 
-
-
-'''
-data preparing
--------------------------------------------------------------------------------
-'''
-print 'preparing training data......'
-Data_Generator = pre_image.ImageDataGenerator(
-    width_shift_range=0.05,
-    height_shift_range=0.05)
-    
-X_pos_train,Y_pos_train = load_positive_data()
-print 'already loaded positive data.'
-
-Data_Generator.fit(X_pos_train,augment=True,rounds=5,seed=1217)
-Y_pos_train = np.repeat(Y_pos_train,5,axis=0)
-print 'positive data augmentation done.'
-
-X_neg_train,Y_neg_train = load_negative_data(len(X_pos_train))
-print 'already loaded negative data.'
-
-X_train = np.concatenate([X_pos_train,X_neg_train],axis=0)
-Y_train = np.concatenate([Y_pos_train,Y_neg_train],axis=0)
-Y_train = np_utils.to_categorical(Y_train, 2)
-'''
--------------------------------------------------------------------------------
-'''
 print 'begin to train model.'
 model.fit_generator(NumpyArrayIterator_for_multiinput(X_train, Y_train, batch_size=150),
                     samples_per_epoch=len(X_train), nb_epoch=20)
