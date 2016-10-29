@@ -94,7 +94,7 @@ def load_negative_data(positive_data_length, ratio = 2, file_path = './CUHK03/cu
     while True:
         for i in xrange(5):
             for ka in xrange(f[f['labeled'][0][i]][0].size):
-                if [i,kb] in validation_set_index or [i,kb] in test_set_index:
+                if [i,ka] in validation_set_index or [i,ka] in test_set_index:
                     continue
                 for kb in xrange(f[f['labeled'][0][i]][0].size):
                     if ka == kb or [i,kb] in validation_set_index or [i,kb] in test_set_index:
