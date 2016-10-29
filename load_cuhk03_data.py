@@ -9,7 +9,7 @@ import numpy as np
 from keras.preprocessing import image
 
 '''
-np.swapaxis(np.array(f[f[f['labeled'][0][i]][j][k]]),0,2)
+np.swapaxes(np.array(f[f[f['labeled'][0][i]][j][k]]),0,2)
 this expression will get a numpy array of a picture with axis order is 'tf'
 
 f[f['labeled'][0][i]][0].size
@@ -29,7 +29,7 @@ def load_positive_data(file_path = './CUHK03/cuhk-03.mat'):
                 print 'i:',i,'j:',j,'k:',k
                 a = np.array(f[f[f['labeled'][0][i]][j][k]])
                 b = np.array(f[f[f['labeled'][0][i]][j+5][k]])
-                if b.size == 1: continue
+                if b.size < 3 or a.size < 3: continue
                 a = _resize_image(np.swapaxes(a,0,2))
                 b = _resize_image(np.swapaxes(b,0,2))
                 image_array_list.append(np.concatenate([a,b],axis=2))
@@ -68,7 +68,7 @@ def _random_choose(f):
             k2 = np.random.randint(0,f[f['labeled'][0][i]][0].size)
         a = np.array(f[f[f['labeled'][0][i]][j][k1]])
         b = np.array(f[f[f['labeled'][0][i]][j+5][k2]])
-        if a.size > 1 and b.size > 1: break
+        if a.size > 2 and b.size > 2: break
     return a,b
 
 
