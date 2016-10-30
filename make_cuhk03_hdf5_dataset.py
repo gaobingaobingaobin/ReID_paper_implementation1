@@ -206,11 +206,11 @@ def load_testset_data(file_path = './CUHK03/cuhk-03.mat'):
     count = 0
     for i,k in test_set_index:
         for ja in xrange(5):
-            a = np.array(f[f[f['labeled'][0][i]][ja][k]])
+            a = np.array(f[f[f['labeled'][0][i-1]][ja][k]])
             if a.size > 3: 
                 break
         for jb in xrange(5,10):
-            b = np.array(f[f[f['labeled'][0][i]][jb][k]])
+            b = np.array(f[f[f['labeled'][0][i-1]][jb][k]])
             if b.size > 3:
                 break
         a = _resize_image(a.transpose(2,1,0))
